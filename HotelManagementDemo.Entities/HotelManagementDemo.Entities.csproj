@@ -8,4 +8,8 @@
     <ProjectReference Include="..\HotelManagementDemo.Core\HotelManagementDemo.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Concrete\Dtos\" />
+  </ItemGroup>
+
 </Project>

@@ -1,3 +1,7 @@
+using HotelManagementDemo.Business.Abstract;
+using HotelManagementDemo.Business.Concrete;
+using HotelManagementDemo.DataAccess.Abstract;
+using HotelManagementDemo.DataAccess.Concrete.EntityFramework;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -32,6 +36,18 @@ namespace HotelManagementDemo.WEBApi
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "HotelManagementDemo.WEBApi", Version = "v1" });
             });
+
+            //DI for hotel 
+            services.AddSingleton<IHotelService,HotelManager>();
+            services.AddSingleton<IHotelDal, EfHotelDal>();
+            
+            //DI for user 
+            services.AddSingleton<IUserService, UserManager>();
+            services.AddSingleton<IUserDal, EfUserDal>();
+
+            //DI for auth 
+            services.AddSingleton<IAuthService, AuthManager>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

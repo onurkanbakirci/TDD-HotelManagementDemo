@@ -22,6 +22,7 @@ namespace HotelManagementDemo.Business.Tests
         [TestInitialize]
         public void Setup()
         {
+
             //setup autofixure in order to generate fake model data
             _fixture = new Fixture();
 
@@ -33,6 +34,10 @@ namespace HotelManagementDemo.Business.Tests
             //setup hotelDal methods
             _mockHotelDal = new Mock<IHotelDal>();
             _mockHotelDal.Setup(m => m.GetList(null)).Returns(_dbHotels);
+            _mockHotelDal.Setup(m => m.Get(x=>x.Id == 10)).Returns(_dbHotels.Where(x=>x.Id == 10).SingleOrDefault());
+            _mockHotelDal.Setup(m => m.Update(_dbHotels.Where(x=>x.Id == 10).SingleOrDefault()));
+            _mockHotelDal.Setup(m => m.Delete(_dbHotels.Where(x => x.Id == 10).SingleOrDefault()));
+
         }
 
 
@@ -78,6 +83,58 @@ namespace HotelManagementDemo.Business.Tests
 
             Assert.IsTrue(hotels.Success);
             Assert.AreEqual(23, hotels.Data.Count);
+        }
+
+
+        /// <summary>
+        /// Add new hotel to database
+        /// </summary>
+        [TestMethod]
+        public void Add_Hotel_ReturnsResultEntity()
+        {
+            IHotelService hotelService = new HotelManager(_mockHotelDal.Object);
+
+            var hotel = new Hotel()
+            {
+                Name = "OnurkanOtel",
+                City = "İstanbul",
+                State = "Üsküdar",
+                Address = "Üsküdar/Altunizade",
+                Phone = "5387218258",
+                Zip = "00000"
+            };
+
+            IResult addOperation = hotelService.Add(hotel);
+
+            Assert.IsTrue(addOperation.Success);
+        }
+
+
+        /// <summary>
+        /// Update hotel in database
+        /// </summary>
+        [TestMethod]
+        public void Update_Hotel_ReturnsResultEntity()
+        {
+            IHotelService hotelService = new HotelManager(_mockHotelDal.Object);
+            var hotel = hotelService.GetById(10);
+            hotel.Data.Address = "Üsküdar/Altunizade";
+            hotel.Data.Phone = "05387218258";
+            var result = hotelService.Update(hotel.Data);
+            Assert.IsTrue(result.Success);
+        }
+
+
+        /// <summary>
+        /// Delete hotel from database
+        /// </summary>
+        [TestMethod]
+        public void Delete_Hotel_ReturnsResultEntity()
+        {
+            IHotelService hotelService = new HotelManager(_mockHotelDal.Object);
+            var hotel = hotelService.GetById(10);
+            var result = hotelService.Delete(hotel.Data);
+            Assert.IsTrue(result.Success);
         }
     }
 }
